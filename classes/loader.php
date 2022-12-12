@@ -1,5 +1,5 @@
 <?php
-
+namespace ConfigManager;
 class Loader
 {
     const DEFAULT_SEP = '.';
