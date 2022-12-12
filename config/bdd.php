@@ -5,6 +5,7 @@ return ['read' => [
     'dbname' => 'test',
     'user' => '',
     'pass' => '',
+    'port' => 3306
 
 ], 'write' => [
 
@@ -12,5 +13,6 @@ return ['read' => [
     'dbname' => 'test',
     'user' => '',
     'pass' => '',
+    'port' => 3306
 
 ]];

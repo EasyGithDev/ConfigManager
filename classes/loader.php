@@ -6,16 +6,15 @@ class Loader
 {
     const DEFAULT_SEP = '.';
     const DEFAULT_DIR = 'config';
-    protected $container = [];
-    protected $dir = '';
-    protected $sep = '';
 
     private static $_instance = null;
 
+    protected $container = [];
+    protected $dir = self::DEFAULT_DIR;
+    protected $sep = self::DEFAULT_SEP;
+
     private function __construct()
     {
-        $this->dir = self::DEFAULT_DIR;
-        $this->sep = self::DEFAULT_SEP;
     }
 
     public static function getInstance()
@@ -48,13 +47,13 @@ class Loader
         }
 
         if (!array_key_exists($kFile, $this->container)) {
-            return false;
+            throw new KeyExist($kFile);
         }
 
         return $this->getKey($kList, $this->container[$kFile]);
     }
 
-    public function keyList(string $str, string $sep = self::DEFAULT_SEP): array
+    protected function keyList(string $str, string $sep = self::DEFAULT_SEP): array
     {
         $str = rtrim(trim($str), $sep);
         if (empty($str)) {
@@ -63,7 +62,7 @@ class Loader
         return explode($sep, $str);
     }
 
-    public function getKeyFile(array &$kList): string|bool
+    protected function getKeyFile(array &$kList): string|bool
     {
         if (!count($kList)) {
             throw new KeyFile();
@@ -71,12 +70,12 @@ class Loader
         return array_shift($kList);
     }
 
-    public function keyFile2Filepath($keyFile): string
+    protected function keyFile2Filepath($keyFile): string
     {
         return $this->getDir() . '/' . mb_strtolower($keyFile) . '.php';
     }
 
-    function loadConfigurationFile(string $key, string $filename): void
+    protected function loadConfigurationFile(string $key, string $filename): void
     {
         if (!file_exists($filename)) {
             throw new FileNotFound($filename);
@@ -85,7 +84,7 @@ class Loader
         $this->container[$key] = require $filename;
     }
 
-    function getKey($kList, $conf)
+    protected function getKey($kList, $conf)
     {
         while (count($kList) > 0) {
             $k = array_shift($kList);
