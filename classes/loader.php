@@ -1,5 +1,7 @@
 <?php
+
 namespace ConfigManager;
+
 class Loader
 {
     const DEFAULT_SEP = '.';
@@ -28,7 +30,7 @@ class Loader
     public static function __callStatic($name, $arguments)
     {
         if ($name == 'get') {
-            $loader =     Loader::getInstance();
+            $loader = Loader::getInstance();
             $strKey = $arguments[0];
             return $loader->$strKey;
         }
@@ -37,17 +39,11 @@ class Loader
 
     public function __get($key)
     {
-        $kList = $this->kList($key, $this->sep);
-        if (!$kList) {
-            return false;
-        }
+        $kList = $this->keyList($key, $this->sep);
 
         if (!array_key_exists($key, $this->container)) {
-            $kFile = $this->getConfigurationFile($kList);
-            if (!$kFile) {
-                return false;
-            }
-            $filename = $this->getDir() . '/' . mb_strtolower($kFile) . '.php';
+            $kFile = $this->getKeyFile($kList);
+            $filename = $this->keyFile2Filepath($kFile);
             $this->loadConfigurationFile($kFile, $filename);
         }
 
@@ -58,32 +54,35 @@ class Loader
         return $this->getKey($kList, $this->container[$kFile]);
     }
 
-    public function kList(string $str, string $sep = self::DEFAULT_SEP): array|bool
+    public function keyList(string $str, string $sep = self::DEFAULT_SEP): array
     {
         $str = rtrim(trim($str), $sep);
         if (empty($str)) {
-            return false;
+            throw new KeyEmpty();
         }
         return explode($sep, $str);
     }
 
-    public function getConfigurationFile(array &$kList): string|bool
+    public function getKeyFile(array &$kList): string|bool
     {
         if (!count($kList)) {
-            return false;
+            throw new KeyFile();
         }
         return array_shift($kList);
     }
 
-    function loadConfigurationFile(string $key, string $filename): bool
+    public function keyFile2Filepath($keyFile): string
+    {
+        return $this->getDir() . '/' . mb_strtolower($keyFile) . '.php';
+    }
+
+    function loadConfigurationFile(string $key, string $filename): void
     {
         if (!file_exists($filename)) {
-            return false;
+            throw new FileNotFound($filename);
         }
 
         $this->container[$key] = require $filename;
-
-        return true;
     }
 
     function getKey($kList, $conf)
