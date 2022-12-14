@@ -7,12 +7,11 @@ use ConfigManager\Loader;
 
 try {
 
-    $port = (Loader::getInstance())
-        ->setDir(__DIR__ . '/../config')
+    $lang = (Loader::getInstance())
         ->setSep('_')
         ->app_lang;
 
-    var_dump($port);
+    var_dump($lang);
 } catch (FileNotFound $e) {
     print "Erreur !: " . $e->getMessage() . "<br/>";
     die();

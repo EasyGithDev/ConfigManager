@@ -29,8 +29,17 @@ class Loader
     public static function __callStatic($name, $arguments)
     {
         if ($name == 'get') {
+            if (count($arguments) < 1) {
+                throw new MissingArgument();
+            }
             $loader = Loader::getInstance();
             $strKey = $arguments[0];
+            if (isset($arguments[1])) {
+                $loader->setSep($arguments[1]);
+            }
+            if (isset($arguments[2])) {
+                $loader->setDir($arguments[2]);
+            }
             return $loader->$strKey;
         }
         return false;
@@ -43,7 +52,7 @@ class Loader
         if (!array_key_exists($key, $this->container)) {
             $kFile = $this->getKeyFile($kList);
             $filename = $this->keyFile2Filepath($kFile);
-            $this->loadConfigurationFile($kFile, $filename);
+            $this->loadConfig($kFile, $filename);
         }
 
         if (!array_key_exists($kFile, $this->container)) {
@@ -72,16 +81,22 @@ class Loader
 
     protected function keyFile2Filepath($keyFile): string
     {
-        return $this->getDir() . '/' . mb_strtolower($keyFile) . '.php';
+        return $this->dir . '/' . mb_strtolower($keyFile) . '.php';
     }
 
-    protected function loadConfigurationFile(string $key, string $filename): void
+    protected function loadConfig(string $key, string $filename): void
     {
         if (!file_exists($filename)) {
             throw new FileNotFound($filename);
         }
 
-        $this->container[$key] = require $filename;
+        $conf = require $filename;
+
+        if (!is_array($conf)) {
+            throw new InvalidConfigFile();
+        }
+
+        $this->container[$key] = $conf;
     }
 
     protected function getKey($kList, $conf)
@@ -97,14 +112,6 @@ class Loader
     }
 
     /**
-     * Get the value of dir
-     */
-    public function getDir(): string
-    {
-        return $this->dir;
-    }
-
-    /**
      * Set the value of dir
      *
      * @return  self
@@ -112,16 +119,7 @@ class Loader
     public function setDir(string $dir): Loader
     {
         $this->dir = $dir;
-
         return $this;
-    }
-
-    /**
-     * Get the value of sep
-     */
-    public function getSep(): string
-    {
-        return $this->sep;
     }
 
     /**
@@ -132,7 +130,6 @@ class Loader
     public function setSep(string $sep): Loader
     {
         $this->sep = $sep;
-
         return $this;
     }
 }
