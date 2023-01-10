@@ -2,13 +2,13 @@
 
 require_once __DIR__ . '/../classes/autoload.php';
 
-use ConfigManager\Loader;
+use ConfigManager\Config;
 
-$portR = (Loader::getInstance())
+$portR = (Config::getInstance())
     ->setSep('_')
     ->bdd_read_port;
 
-$portW = (Loader::getInstance())
+$portW = (Config::getInstance())
     ->setSep('§')
     ->bdd§write§port;
 

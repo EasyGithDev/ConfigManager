@@ -3,11 +3,11 @@
 require_once __DIR__ . '/../classes/autoload.php';
 
 use ConfigManager\FileNotFound;
-use ConfigManager\Loader;
+use ConfigManager\Config;
 
 try {
 
-    $lang = (Loader::getInstance())
+    $lang = (Config::getInstance())
         ->setSep('_')
         ->app_lang;
 

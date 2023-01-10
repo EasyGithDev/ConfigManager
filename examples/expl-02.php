@@ -2,9 +2,9 @@
 
 require_once __DIR__ . '/../classes/autoload.php';
 
-use ConfigManager\Loader;
+use ConfigManager\Config;
 
-$hostR = Loader::get('bdd-read-host', '-');
-$hostW = Loader::get('bdd-write-host');
-$dbnameW = Loader::get('bdd.write.dbname', '.');
+$hostR = Config::get('bdd-read-host', '-');
+$hostW = Config::get('bdd-write-host');
+$dbnameW = Config::get('bdd.write.dbname', '.');
 var_dump($hostR, ' ', $hostW, ' ', $dbnameW);

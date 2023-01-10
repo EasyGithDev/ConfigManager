@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/../classes/autoload.php';
 
-use ConfigManager\Loader;
+use ConfigManager\Config;
 
-$hostR = Loader::get('bdd.read.host');
-$hostW = Loader::get('bdd.write.host');
+$hostR = Config::get('bdd.read.host');
+$hostW = Config::get('bdd.write.host');
 var_dump($hostR, ' ', $hostW);
